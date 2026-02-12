@@ -13,22 +13,22 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 echo 'Installing dependencies...'
-                sh 'python3 -m venv venv'
-                sh './venv/bin/pip install -r requirements.txt'
+                bat 'python -m venv venv'
+                bat 'venv\\Scripts\\pip install -r requirements.txt'
             }
         }
 
         stage('Run Tests') {
             steps {
                 echo 'Running tests...'
-                sh './venv/bin/python -m unittest discover -s tests'
+                bat 'venv\\Scripts\\python -m unittest discover -s tests'
             }
         }
 
         stage('Create Artifact') {
             steps {
                 echo 'Creating ZIP file...'
-                sh 'zip -r flask-app.zip .'
+                bat 'powershell Compress-Archive -Path * -DestinationPath flask-app.zip -Force'
             }
         }
     }
@@ -40,5 +40,4 @@ pipeline {
         }
     }
 }
-
 
