@@ -1,47 +1,53 @@
 pipeline {
     agent any
 
+    environment {
+        VENV_DIR = "venv"
+    }
+
     stages {
 
         stage('Checkout Code') {
             steps {
-                echo 'Fetching Source Code...'
-                checkout scm
+                echo 'Cloning repository...'
+                git branch: 'main', url: 'https://github.com/yourusername/FlaskApp.git'
             }
         }
 
-        stage('Setup Python Environment') {
+        stage('Setup Environment') {
             steps {
-                bat 'python -m venv venv'
-            }
-        }
-
-        stage('Install Dependencies') {
-            steps {
-                bat '.\\venv\\Scripts\\python -m pip install --upgrade pip'
-                bat '.\\venv\\Scripts\\pip install -r requirements.txt'
+                echo 'Creating virtual environment...'
+                sh 'python3 -m venv venv'
+                sh './venv/bin/pip install --upgrade pip'
+                sh './venv/bin/pip install -r requirements.txt'
             }
         }
 
         stage('Run Tests') {
             steps {
-                bat '.\\venv\\Scripts\\pytest'
+                echo 'Running tests...'
+                sh './venv/bin/python -m unittest discover -s tests'
             }
         }
-stage('Deploy Flask App') {
-    steps {
-        echo 'Starting Flask App in Background...'
-        bat 'start /B venv\\Scripts\\python app.py'
+
+        stage('Create Artifact') {
+            steps {
+                echo 'Creating ZIP artifact...'
+                sh 'zip -r flask-app.zip .'
             }
         }
     }
 
-    post {
-        success {
-            echo '✅ Pipeline executed successfully!'
-        }
-        failure {
-            echo '❌ Pipeline failed. Check logs.'
-        }
+   post {
+    always {
+        archiveArtifacts artifacts: 'flask-app.zip', fingerprint: true
+        echo 'Pipeline finished!'
+    }
+    success {
+        echo 'Build Successful!'
+    }
+    failure {
+        echo 'Build Failed!'
     }
 }
+
