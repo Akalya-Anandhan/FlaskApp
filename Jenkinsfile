@@ -19,9 +19,12 @@ pipeline {
         }
 
         stage('Run Tests') {
-            steps {
-                echo 'Running tests...'
-                bat 'venv\\Scripts\\python -m unittest discover -s tests'
+    steps {
+        echo 'Running tests with pytest...'
+        bat 'venv\\Scripts\\pytest tests'
+    }
+}
+
             }
         }
 
