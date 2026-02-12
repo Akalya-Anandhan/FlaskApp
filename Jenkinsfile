@@ -28,11 +28,10 @@ pipeline {
                 bat '.\\venv\\Scripts\\pytest'
             }
         }
-
-        stage('Deploy Flask App') {
-            steps {
-                echo 'Starting Flask App...'
-                bat '.\\venv\\Scripts\\python app.py'
+stage('Deploy Flask App') {
+    steps {
+        echo 'Starting Flask App in Background...'
+        bat 'start /B venv\\Scripts\\python app.py'
             }
         }
     }
