@@ -1,24 +1,19 @@
 pipeline {
     agent any
 
-    environment {
-        VENV_DIR = "venv"
-    }
-
     stages {
 
         stage('Checkout Code') {
             steps {
                 echo 'Cloning repository...'
-                git branch: 'main', url: 'https://github.com/yourusername/FlaskApp.git'
+                git branch: 'main', url: 'https://github.com/Akalya-Anandhan/FlaskApp.git'
             }
         }
 
-        stage('Setup Environment') {
+        stage('Install Dependencies') {
             steps {
-                echo 'Creating virtual environment...'
+                echo 'Installing dependencies...'
                 sh 'python3 -m venv venv'
-                sh './venv/bin/pip install --upgrade pip'
                 sh './venv/bin/pip install -r requirements.txt'
             }
         }
@@ -32,22 +27,18 @@ pipeline {
 
         stage('Create Artifact') {
             steps {
-                echo 'Creating ZIP artifact...'
+                echo 'Creating ZIP file...'
                 sh 'zip -r flask-app.zip .'
             }
         }
     }
 
-   post {
-    always {
-        archiveArtifacts artifacts: 'flask-app.zip', fingerprint: true
-        echo 'Pipeline finished!'
-    }
-    success {
-        echo 'Build Successful!'
-    }
-    failure {
-        echo 'Build Failed!'
+    post {
+        always {
+            archiveArtifacts artifacts: 'flask-app.zip', fingerprint: true
+            echo 'Pipeline finished'
+        }
     }
 }
+
 
