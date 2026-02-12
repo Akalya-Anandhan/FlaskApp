@@ -20,14 +20,14 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                echo 'Running tests with pytest...'
+                echo 'Running tests...'
                 bat 'venv\\Scripts\\pytest tests'
             }
         }
 
         stage('Create Artifact') {
             steps {
-                echo 'Creating ZIP file...'
+                echo 'Creating ZIP Artifact...'
                 bat 'powershell Compress-Archive -Path * -DestinationPath flask-app.zip -Force'
             }
         }
@@ -37,6 +37,14 @@ pipeline {
         always {
             archiveArtifacts artifacts: 'flask-app.zip', fingerprint: true
             echo 'Pipeline finished'
+        }
+
+        success {
+            echo 'Build Successful!'
+        }
+
+        failure {
+            echo 'Build Failed!'
         }
     }
 }
